@@ -213,10 +213,24 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Responsive dual-mode: web landing+sidebar / mobile grid (Elastech Production)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
+
+frontend_feature:
+  - task: "Responsive dual-mode: web landing+sidebar / mobile grid (Elastech Production)"
+    implemented: true
+    working: "NA"
+    file: "frontend/app/index.tsx, frontend/app/_layout.tsx, frontend/app/website.tsx, frontend/src/components/Sidebar.tsx, frontend/src/components/LandingPage.tsx, frontend/src/responsive.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "NEW FEATURE. Rebranded to 'Elastech Production' and made the home responsive. (1) NEW src/responsive.ts useIsWideWeb() = Platform web && width>=900. (2) NEW src/components/Sidebar.tsx: persistent left sidebar (width 264) with 'Elastech Production' brand at top + nav items Beranda(/), K-HTT Analyst(/kht), Copper Strip ASTM D130(/copper), Rating DKA(/dka), active highlight via usePathname. (3) _layout.tsx wraps <Stack> in <AppShell> which, on wide web only, renders <Sidebar/> beside the routed content so the sidebar stays visible across ALL modules; on native/narrow it renders content only. (4) NEW src/components/LandingPage.tsx: dark professional landing (brand, hero 'SOLUSI DIGITAL TERDEPAN' + tagline chips SaaS/IoT/Web App/Mobile App + CTA, services grid, module quick-links with live dashboard stats). Accepts optional onBack (mobile). (5) index.tsx: on wide web returns <LandingPage/>; else renders the mobile 2x2 grid with an 'Elastech Production' header and 4 tiles in order Portofolio, K-HTT Analyst, Copper Strip, Rating DKA. Portofolio tile -> /website. (6) website.tsx now renders <LandingPage onBack=...> as the mobile Portofolio page. Modules/routes unchanged — all three module features intact. Lint clean; Metro bundles with no errors; no runtime/console errors. NEEDS FRONTEND TESTING to verify both layouts and that all 3 modules still work in each."
 
 frontend_bugfix:
   - task: "DKA batch PDF export: photos cropped fix"

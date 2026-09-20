@@ -1,9 +1,11 @@
 import { useRouter } from "expo-router";
-import { ArrowRight, Coins, Drop, Flask, Globe, ShieldCheck } from "phosphor-react-native";
+import { ArrowRight, Buildings, Coins, Drop, Flask, Globe } from "phosphor-react-native";
 import { ScrollView, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useCopperDashboard, useDashboard, useDkaDashboard } from "@/src/api";
+import { LandingPage } from "@/src/components/LandingPage";
+import { useIsWideWeb } from "@/src/responsive";
 import { fonts, makeStyles, radius, spacing, useTheme } from "@/src/theme";
 
 export default function Home() {
@@ -11,10 +13,16 @@ export default function Home() {
   const { colors } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const wideWeb = useIsWideWeb();
   const kht = useDashboard();
   const copper = useCopperDashboard();
   const dka = useDkaDashboard();
 
+  // Desktop/web: the home route IS the Elastech Production landing page (the
+  // persistent sidebar is provided by the root AppShell).
+  if (wideWeb) return <LandingPage />;
+
+  // Mobile (Expo Go) / narrow web: 2x2 grid menu with an Elastech header.
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -24,17 +32,30 @@ export default function Home() {
         <View style={styles.inner}>
           <View style={styles.brandRow}>
             <View style={styles.logoMark}>
-              <ShieldCheck size={24} color={colors.onBrand} weight="fill" />
+              <Buildings size={24} color={colors.onBrand} weight="fill" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.brand}>LAB AI VISION</Text>
-              <Text style={styles.brandSub}>Fuel & Lubricant Analysis Suite</Text>
+              <Text style={styles.brand}>Elastech Production</Text>
+              <Text style={styles.brandSub}>Solusi Digital Terdepan</Text>
             </View>
           </View>
 
-          <Text style={styles.pick}>PORTOFOLIO · PILIH MENU</Text>
+          <Text style={styles.pick}>PILIH MENU</Text>
 
           <View style={styles.grid}>
+            {/* Portofolio (landing page) */}
+            <ModuleCard
+              testID="module-portofolio"
+              accent="#8B5CF6"
+              onAccent="#FFFFFF"
+              tile="#241B3A"
+              icon={<Globe size={28} color="#8B5CF6" weight="fill" />}
+              title="Portofolio"
+              subtitle="Profil & layanan Elastech"
+              stat="SaaS · IoT · Web · Mobile"
+              onPress={() => router.push("/website")}
+            />
+
             {/* K-HTT ANALYST */}
             <ModuleCard
               testID="module-kht"
@@ -73,22 +94,9 @@ export default function Home() {
               stat={`${dka.data?.total_batches ?? 0} batch · ${dka.data?.total_samples ?? 0} sampel`}
               onPress={() => router.push("/dka")}
             />
-
-            {/* Website Portofolio */}
-            <ModuleCard
-              testID="module-website"
-              accent="#8B5CF6"
-              onAccent="#FFFFFF"
-              tile="#241B3A"
-              icon={<Globe size={28} color="#8B5CF6" weight="fill" />}
-              title="Website"
-              subtitle="Portofolio & profil saya"
-              stat="Segera hadir"
-              onPress={() => router.push("/website")}
-            />
           </View>
 
-          <Text style={styles.footer}>AI Vision powered by Gemini · © 2026</Text>
+          <Text style={styles.footer}>© 2026 Elastech Production · AI Vision by Gemini</Text>
         </View>
       </ScrollView>
     </View>
