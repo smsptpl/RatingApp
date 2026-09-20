@@ -213,11 +213,26 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "History multi-select + combined PDF export"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
+
+frontend_bugfix:
+  - task: "DKA batch PDF export: photos cropped fix"
+    implemented: true
+    working: true
+    file: "frontend/src/utils/dka-pdf.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "BUG FIX. User reported that in the Rating DKA module, exporting a batch report to PDF showed the sample photos CROPPED (not full). Root cause: in dka-pdf.ts the thumbnail CSS used '.thumb img { width:100%; height:150px; object-fit:cover; }' — object-fit:cover with a fixed 150px height crops the image to fill the box, cutting off parts of tall tube crops. Fix: changed to 'width:100%; height:auto; max-height:340px; object-fit:contain; display:block; margin:0 auto' and added a light background + break-inside:avoid on .thumb. Now every photo is shown in full (never cropped), scaled to the column/page width, with a max-height cap so very tall crops still fit the page (letterboxed via contain). Affects both single-batch (buildDkaSingleHtml) and combined (buildDkaCombinedHtml) reports since both use renderBatch()."
+        -working: true
+        -agent: "testing"
+        -comment: "✅ DKA PDF EXPORT BUG FIX VERIFIED. Tested combined batch PDF export from DKA History multi-select. Successfully captured generated report HTML (358,056 chars) from hidden iframe. CSS VERIFICATION: Found .thumb img rule with ALL correct properties: (1) object-fit: contain ✓ (NOT cover - images shown in full), (2) height: auto ✓ (NOT fixed 150px - maintains aspect ratio), (3) max-height: 340px ✓ (caps very tall images), (4) display: block ✓, (5) margin: 0 auto ✓ (centers images). NO old CSS found (no object-fit:cover, no height:150px). All 4 sample images have valid base64 data URI sources (81-90KB each). The fix is correctly applied in the generated report HTML. Sample photos will now display FULL without cropping. No JavaScript errors in console (only minor warnings about useNativeDriver and pointerEvents deprecation, both expected for React Native on web). The bug fix is production-ready."
 
 agent_communication:
     -agent: "main"
@@ -228,9 +243,10 @@ agent_communication:
     -message: "✅ CORS BUG FIX VERIFIED - All 14 tests passed (14/14). CRITICAL FIX CONFIRMED: (1) CORS on actual requests: GET /api/dashboard and GET /api/tests with Origin: https://example.com both return Access-Control-Allow-Origin: https://example.com (reflected origin, NOT '*') and Access-Control-Allow-Credentials: true. (2) CORS preflight: OPTIONS /api/analyze with Origin: https://example.com returns Access-Control-Allow-Origin: https://example.com (reflected) and Access-Control-Allow-Credentials: true. (3) Full AI Vision flow still works: POST /api/upload → POST /api/analyze (17.6s, rating 3.0/10 POOR FAIL, proper Gemini response) → GET /api/tests/{id} → search → dashboard (count 7→8) → trend → DELETE → 404 verification → list exclusion. The Safari 'Load failed' bug is RESOLVED. The backend now correctly reflects the request Origin in CORS headers, which is valid CORS accepted by Safari/WebKit. All functionality remains intact."
     -agent: "testing"
     -message: "✅ EDIT ANALYSIS RESULT FEATURE VERIFIED - All 13 tests passed (13/13). The new PUT /api/tests/{id} endpoint is fully functional. CRITICAL FEATURES CONFIRMED: (1) Rating auto-recomputation: rating=4.2 → status=FAIL (since <7), rating=8.0 → status=PASS (since >=7). (2) Rating clamping: rating=15 clamped to 10.0 (max). (3) Field updates: ai_summary and recommendation updated correctly and persisted. (4) Metadata: edited=true and edited_at timestamp set on all updates. (5) Persistence: All changes confirmed via GET /api/tests/{id}. (6) Error handling: PUT on non-existent UUID returns 404. (7) Regression: All existing endpoints (GET /api/, /api/dashboard, /api/tests, /api/trend, /api/color-scale) still working correctly. (8) Cleanup: Original seeded record values restored successfully (rating=8.7, status=PASS, ai_summary restored, recommendation cleared). The feature is production-ready for editing analysis results before PDF export."
-
     -agent: "testing"
     -message: "✅ NIKKO COLOR SCALE FEATURE VERIFIED - All 10 tests passed (10/10). TEST 1 - NEW endpoint GET /api/color-scale: Returns 200 JSON with all required keys (title, note, image, levels). Image is base64 data URI starting with 'data:image/jpeg;base64,' with 329,099 chars (exceeds 10,000 requirement). Levels array has exactly 11 entries (0-10), each with all required fields (level, color, name, condition, deposit_pct, grade, status). Convention verified: level 0 = 'Hitam Pekat' status FAIL (darkest/worst), level 10 = 'Bening / Tak Berwarna' status PASS (clear/best). Levels 0-6 all have status FAIL, levels 7-10 all have status PASS. TEST 2 - AI analyze with two-image comparison: POST /api/upload successful, POST /api/analyze completed in 24.0s with rating 5.0/10 FAIR FAIL, ai_model=gemini-3.1-pro-preview, ai_summary in Bahasa Indonesia references COLOR SCALE ('Warna endapan cokelat sedang cocok dengan skala 5 pada COLOR SCALE'), all parameters present and numeric. Cleanup successful (deleted test record, dashboard back to 4 seeded records). TEST 3 - Regression: GET /api/, GET /api/dashboard, GET /api/tests, GET /api/trend, GET /api/tests/{id}, DELETE /api/tests/nonexistent returns 404 - all working correctly. The Nikko Color Scale feature is fully functional with proper two-image comparison in Gemini AI."
+    -agent: "testing"
+    -message: "✅ DKA PDF EXPORT BUG FIX VERIFIED. The CSS fix for cropped photos in DKA batch PDF reports has been successfully verified. Tested the combined batch PDF export from DKA History multi-select (selected 1 batch with 4 samples). The generated report HTML (358KB) was captured from the hidden iframe and analyzed. All CSS properties are correct: object-fit:contain (NOT cover), height:auto (NOT fixed 150px), max-height:340px, display:block, margin:0 auto. No old CSS found. All 4 sample images have valid base64 data URIs. Sample photos will now display in full without cropping. No JavaScript errors during export. The bug fix is production-ready."
 
   - task: "AI Vision analysis fails on real photos (proxy 60s timeout) — async job fix"
     implemented: true

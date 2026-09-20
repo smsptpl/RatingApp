@@ -37,8 +37,11 @@ function commonStyles(): string {
     td, th { padding: 8px 6px; border-bottom: 1px solid #e5e7eb; font-size: 12px; text-align: left; }
     th { font-size: 10px; color: #64748b; letter-spacing: 0.5px; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; }
     .thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
-    .thumb { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
-    .thumb img { width: 100%; height: 150px; object-fit: cover; display: block; }
+    .thumb { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #f8fafc; break-inside: avoid; page-break-inside: avoid; }
+    /* Show the FULL photo scaled to the column width, never cropped. object-fit:contain
+       + auto height keeps the whole image visible; max-height caps very tall tube crops
+       so they still fit on the page (letterboxed, not cut off). */
+    .thumb img { width: 100%; height: auto; max-height: 340px; object-fit: contain; display: block; margin: 0 auto; }
     .thumb .cap { padding: 6px; font-size: 10px; color: #374151; text-align: center; }
     .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; margin-top: 10px; }
     .meta-grid div { font-size: 11px; color: #374151; padding: 4px 0; border-bottom: 1px solid #eef2f7; }
