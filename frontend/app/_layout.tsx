@@ -41,6 +41,7 @@ export default function RootLayout() {
                     }}
                   >
                     <Stack.Screen name="index" />
+                    <Stack.Screen name="website" />
                     <Stack.Screen name="kht" />
                     <Stack.Screen name="copper" />
                     <Stack.Screen name="dka" />

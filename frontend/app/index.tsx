@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { ArrowRight, Coins, Drop, Flask, ShieldCheck } from "phosphor-react-native";
+import { ArrowRight, Coins, Drop, Flask, Globe, ShieldCheck } from "phosphor-react-native";
 import { ScrollView, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -32,49 +32,61 @@ export default function Home() {
             </View>
           </View>
 
-          <Text style={styles.pick}>PILIH MODUL ANALISA</Text>
+          <Text style={styles.pick}>PORTOFOLIO · PILIH MENU</Text>
 
-          {/* K-HTT ANALYST */}
-          <ModuleCard
-            testID="module-kht"
-            accent={colors.brandPrimary}
-            onAccent={colors.onBrandPrimary}
-            tile={colors.brandTertiary}
-            icon={<Flask size={30} color={colors.brandPrimary} weight="fill" />}
-            title="K-HTT ANALYST"
-            subtitle="Komatsu Hot Tube Tester"
-            desc="Rating endapan 0–10 (Nikko Color Scale) untuk oli & pelumas."
-            stat={`${kht.data?.total ?? 0} sampel · ${kht.data?.passed ?? 0} clear`}
-            onPress={() => router.push("/kht")}
-          />
+          <View style={styles.grid}>
+            {/* K-HTT ANALYST */}
+            <ModuleCard
+              testID="module-kht"
+              accent={colors.brandPrimary}
+              onAccent={colors.onBrandPrimary}
+              tile={colors.brandTertiary}
+              icon={<Flask size={28} color={colors.brandPrimary} weight="fill" />}
+              title="K-HTT ANALYST"
+              subtitle="Komatsu Hot Tube Tester"
+              stat={`${kht.data?.total ?? 0} sampel · ${kht.data?.passed ?? 0} clear`}
+              onPress={() => router.push("/kht")}
+            />
 
-          {/* Copper Strip ASTM D130 */}
-          <ModuleCard
-            testID="module-copper"
-            accent={colors.brandSecondary}
-            onAccent={colors.onBrandSecondary}
-            tile="#3A2A10"
-            icon={<Coins size={30} color={colors.brandSecondary} weight="fill" />}
-            title="Copper Strip ASTM D130"
-            subtitle="ASTM D130 / IP 154 · Copper Strip Corrosion"
-            desc="Klasifikasi korosi tembaga 1a–4c dengan status CLEAR / TARNISH."
-            stat={`${copper.data?.total ?? 0} sampel · ${copper.data?.passed ?? 0} clear`}
-            onPress={() => router.push("/copper")}
-          />
+            {/* Copper Strip ASTM D130 */}
+            <ModuleCard
+              testID="module-copper"
+              accent={colors.brandSecondary}
+              onAccent={colors.onBrandSecondary}
+              tile="#3A2A10"
+              icon={<Coins size={28} color={colors.brandSecondary} weight="fill" />}
+              title="Copper Strip"
+              subtitle="ASTM D130 / IP 154"
+              stat={`${copper.data?.total ?? 0} sampel · ${copper.data?.passed ?? 0} clear`}
+              onPress={() => router.push("/copper")}
+            />
 
-          {/* Rating DKA */}
-          <ModuleCard
-            testID="module-dka"
-            accent={colors.info}
-            onAccent={colors.onInfo}
-            tile="#122A4A"
-            icon={<Drop size={30} color={colors.info} weight="fill" />}
-            title="Rating DKA"
-            subtitle="Batch 4 sampel · OCR label + AI Vision"
-            desc="Deteksi 4 tabung sekaligus, baca kode sampel, rating CLEAR / Aspect 1–3."
-            stat={`${dka.data?.total_batches ?? 0} batch · ${dka.data?.total_samples ?? 0} sampel`}
-            onPress={() => router.push("/dka")}
-          />
+            {/* Rating DKA */}
+            <ModuleCard
+              testID="module-dka"
+              accent={colors.info}
+              onAccent={colors.onInfo}
+              tile="#122A4A"
+              icon={<Drop size={28} color={colors.info} weight="fill" />}
+              title="Rating DKA"
+              subtitle="Batch 4 sampel · OCR + AI"
+              stat={`${dka.data?.total_batches ?? 0} batch · ${dka.data?.total_samples ?? 0} sampel`}
+              onPress={() => router.push("/dka")}
+            />
+
+            {/* Website Portofolio */}
+            <ModuleCard
+              testID="module-website"
+              accent="#8B5CF6"
+              onAccent="#FFFFFF"
+              tile="#241B3A"
+              icon={<Globe size={28} color="#8B5CF6" weight="fill" />}
+              title="Website"
+              subtitle="Portofolio & profil saya"
+              stat="Segera hadir"
+              onPress={() => router.push("/website")}
+            />
+          </View>
 
           <Text style={styles.footer}>AI Vision powered by Gemini · © 2026</Text>
         </View>
@@ -91,7 +103,6 @@ function ModuleCard({
   icon,
   title,
   subtitle,
-  desc,
   stat,
   onPress,
 }: {
@@ -102,25 +113,34 @@ function ModuleCard({
   icon: React.ReactNode;
   title: string;
   subtitle: string;
-  desc: string;
   stat: string;
   onPress: () => void;
 }) {
   const styles = useStyles();
   return (
-    <Pressable testID={testID} onPress={onPress} style={({ pressed }: { pressed: boolean }) => [styles.card, { borderColor: accent }, pressed && { opacity: 0.85 }]}>
-      <View style={styles.cardTop}>
-        <View style={[styles.cardIcon, { backgroundColor: tile }]}>{icon}</View>
-        <View style={{ flex: 1, marginLeft: spacing.md }}>
-          <Text style={[styles.cardTitle, { color: accent }]}>{title}</Text>
-          <Text style={styles.cardSubtitle}>{subtitle}</Text>
-        </View>
+    <Pressable
+      testID={testID}
+      onPress={onPress}
+      style={({ pressed }: { pressed: boolean }) => [
+        styles.card,
+        { borderColor: accent },
+        pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+      ]}
+    >
+      <View style={[styles.cardIcon, { backgroundColor: tile }]}>{icon}</View>
+      <View style={styles.cardBody}>
+        <Text style={[styles.cardTitle, { color: accent }]} numberOfLines={2}>
+          {title}
+        </Text>
+        <Text style={styles.cardSubtitle} numberOfLines={2}>
+          {subtitle}
+        </Text>
       </View>
-      <Text style={styles.cardDesc}>{desc}</Text>
       <View style={styles.cardBottom}>
-        <Text style={styles.cardStat}>{stat}</Text>
+        <Text style={styles.cardStat} numberOfLines={1}>
+          {stat}
+        </Text>
         <View style={[styles.openBtn, { backgroundColor: accent }]}>
-          <Text style={[styles.openText, { color: onAccent }]}>BUKA</Text>
           <ArrowRight size={15} color={onAccent} weight="bold" />
         </View>
       </View>
@@ -145,28 +165,31 @@ const useStyles = makeStyles((c) => ({
   brandSub: { fontFamily: fonts.mono, fontSize: 11, color: c.brandPrimary, marginTop: 1 },
   pick: { fontFamily: fonts.mono, fontSize: 11, color: c.muted, letterSpacing: 1.5, marginTop: spacing.sm },
 
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
   card: {
+    flexBasis: "47%",
+    flexGrow: 1,
+    minWidth: 150,
+    minHeight: 180,
     backgroundColor: c.surfaceSecondary,
     borderRadius: radius.lg,
     borderWidth: 1.5,
     padding: spacing.lg,
     gap: spacing.md,
+    justifyContent: "space-between",
   },
-  cardTop: { flexDirection: "row", alignItems: "center" },
-  cardIcon: { width: 56, height: 56, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
-  cardTitle: { fontFamily: fonts.display, fontSize: 22, letterSpacing: 0.5 },
-  cardSubtitle: { fontFamily: fonts.mono, fontSize: 11, color: c.onSurfaceTertiary, marginTop: 2 },
-  cardDesc: { fontFamily: fonts.mono, fontSize: 12, color: c.onSurfaceSecondary, lineHeight: 18 },
-  cardBottom: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xs },
-  cardStat: { fontFamily: fonts.monoMedium, fontSize: 11, color: c.muted },
+  cardIcon: { width: 52, height: 52, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+  cardBody: { gap: 3, flex: 1 },
+  cardTitle: { fontFamily: fonts.display, fontSize: 19, letterSpacing: 0.5 },
+  cardSubtitle: { fontFamily: fonts.mono, fontSize: 10.5, color: c.onSurfaceTertiary, lineHeight: 15 },
+  cardBottom: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  cardStat: { fontFamily: fonts.monoMedium, fontSize: 10, color: c.muted, flex: 1, marginRight: spacing.sm },
   openBtn: {
-    flexDirection: "row",
+    width: 32,
+    height: 32,
     alignItems: "center",
-    gap: spacing.xs,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+    justifyContent: "center",
     borderRadius: radius.md,
   },
-  openText: { fontFamily: fonts.monoBold, fontSize: 12, letterSpacing: 1 },
   footer: { fontFamily: fonts.mono, fontSize: 10, color: c.muted, textAlign: "center", marginTop: spacing.lg },
 }));
