@@ -213,8 +213,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Responsive dual-mode: web landing+sidebar / mobile grid (Elastech Production)"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -222,15 +221,21 @@ test_plan:
 frontend_feature:
   - task: "Responsive dual-mode: web landing+sidebar / mobile grid (Elastech Production)"
     implemented: true
-    working: "NA"
+    working: true
     file: "frontend/app/index.tsx, frontend/app/_layout.tsx, frontend/app/website.tsx, frontend/src/components/Sidebar.tsx, frontend/src/components/LandingPage.tsx, frontend/src/responsive.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         -working: "NA"
         -agent: "main"
         -comment: "NEW FEATURE. Rebranded to 'Elastech Production' and made the home responsive. (1) NEW src/responsive.ts useIsWideWeb() = Platform web && width>=900. (2) NEW src/components/Sidebar.tsx: persistent left sidebar (width 264) with 'Elastech Production' brand at top + nav items Beranda(/), K-HTT Analyst(/kht), Copper Strip ASTM D130(/copper), Rating DKA(/dka), active highlight via usePathname. (3) _layout.tsx wraps <Stack> in <AppShell> which, on wide web only, renders <Sidebar/> beside the routed content so the sidebar stays visible across ALL modules; on native/narrow it renders content only. (4) NEW src/components/LandingPage.tsx: dark professional landing (brand, hero 'SOLUSI DIGITAL TERDEPAN' + tagline chips SaaS/IoT/Web App/Mobile App + CTA, services grid, module quick-links with live dashboard stats). Accepts optional onBack (mobile). (5) index.tsx: on wide web returns <LandingPage/>; else renders the mobile 2x2 grid with an 'Elastech Production' header and 4 tiles in order Portofolio, K-HTT Analyst, Copper Strip, Rating DKA. Portofolio tile -> /website. (6) website.tsx now renders <LandingPage onBack=...> as the mobile Portofolio page. Modules/routes unchanged — all three module features intact. Lint clean; Metro bundles with no errors; no runtime/console errors. NEEDS FRONTEND TESTING to verify both layouts and that all 3 modules still work in each."
+        -working: true
+        -agent: "testing"
+        -comment: "✅ RESPONSIVE DUAL-MODE FEATURE VERIFIED. Comprehensive testing completed for both wide web (1440x900) and mobile (414x896) modes. WIDE WEB MODE: (1) Landing page renders correctly with brand 'Elastech Production', hero eyebrow 'SOLUSI DIGITAL TERDEPAN', and all 4 tagline chips (SaaS, IoT, Web App, Mobile App) ✓. (2) Sidebar is present with 'NAVIGASI' text, sidebar brand 'Elastech/Production', and all 4 nav items (Beranda, K-HTT Analyst, Copper Strip ASTM D130, Rating DKA) ✓. (3) Sidebar navigation works: clicked sidebar-item-/kht → K-HTT module opened with dashboard content, sidebar PERSISTS (NAVIGASI still visible) ✓; clicked sidebar-item-/copper → Copper module opened with dashboard, sidebar PERSISTS ✓; clicked sidebar-item-/dka → DKA module opened with dashboard, sidebar PERSISTS ✓; clicked sidebar-item-/ → returned to landing page ✓. (4) Landing page quick-links work: clicked landing-module-/copper → Copper module opened, sidebar PERSISTS ✓. MOBILE MODE: (1) 2x2 grid menu renders with header 'Elastech Production' and all 4 tiles (module-portofolio, module-kht, module-copper, module-dka) ✓. (2) Sidebar is correctly HIDDEN (NAVIGASI text absent) ✓. (3) Portofolio navigation: tapped module-portofolio → landing page opened with back button (portofolio-back) ✓; tapped back button → returned to grid ✓. (4) Module navigation: tapped module-kht → K-HTT dashboard loaded ✓; tapped module-dka → DKA dashboard loaded ✓. All 3 analysis modules (K-HTT, Copper, DKA) load correctly in both modes. No JavaScript errors detected. CODE QUALITY ISSUE (non-blocking): Duplicate testIDs found for landing module quick-links (landing-module-/kht, landing-module-/copper, landing-module-/dka each appear 2 times instead of 1). This violates unique testID requirement but does not affect functionality. Recommend fixing by ensuring testIDs are unique across the component tree."
+        -working: true
+        -agent: "main"
+        -comment: "Addressed the non-blocking duplicate-testID note: LandingPage now accepts idPrefix (default 'landing'; the /website Portofolio route passes 'portofolio') so module quick-link testIDs are unique across the two mounted routes. Lint clean, Metro bundles with no errors, no functional change."
 
 frontend_bugfix:
   - task: "DKA batch PDF export: photos cropped fix"
@@ -261,6 +266,8 @@ agent_communication:
     -message: "✅ NIKKO COLOR SCALE FEATURE VERIFIED - All 10 tests passed (10/10). TEST 1 - NEW endpoint GET /api/color-scale: Returns 200 JSON with all required keys (title, note, image, levels). Image is base64 data URI starting with 'data:image/jpeg;base64,' with 329,099 chars (exceeds 10,000 requirement). Levels array has exactly 11 entries (0-10), each with all required fields (level, color, name, condition, deposit_pct, grade, status). Convention verified: level 0 = 'Hitam Pekat' status FAIL (darkest/worst), level 10 = 'Bening / Tak Berwarna' status PASS (clear/best). Levels 0-6 all have status FAIL, levels 7-10 all have status PASS. TEST 2 - AI analyze with two-image comparison: POST /api/upload successful, POST /api/analyze completed in 24.0s with rating 5.0/10 FAIR FAIL, ai_model=gemini-3.1-pro-preview, ai_summary in Bahasa Indonesia references COLOR SCALE ('Warna endapan cokelat sedang cocok dengan skala 5 pada COLOR SCALE'), all parameters present and numeric. Cleanup successful (deleted test record, dashboard back to 4 seeded records). TEST 3 - Regression: GET /api/, GET /api/dashboard, GET /api/tests, GET /api/trend, GET /api/tests/{id}, DELETE /api/tests/nonexistent returns 404 - all working correctly. The Nikko Color Scale feature is fully functional with proper two-image comparison in Gemini AI."
     -agent: "testing"
     -message: "✅ DKA PDF EXPORT BUG FIX VERIFIED. The CSS fix for cropped photos in DKA batch PDF reports has been successfully verified. Tested the combined batch PDF export from DKA History multi-select (selected 1 batch with 4 samples). The generated report HTML (358KB) was captured from the hidden iframe and analyzed. All CSS properties are correct: object-fit:contain (NOT cover), height:auto (NOT fixed 150px), max-height:340px, display:block, margin:0 auto. No old CSS found. All 4 sample images have valid base64 data URIs. Sample photos will now display in full without cropping. No JavaScript errors during export. The bug fix is production-ready."
+    -agent: "testing"
+    -message: "✅ RESPONSIVE DUAL-MODE FEATURE FULLY TESTED. Comprehensive Playwright testing completed for both viewport modes. PART A (Wide Web 1440x900): Landing page content verified (brand, hero, chips) ✓, Sidebar present and persistent across all modules ✓, All sidebar navigation works (K-HTT, Copper, DKA) ✓, Landing quick-links functional ✓. PART B (Mobile 414x896): 2x2 grid menu renders correctly ✓, Sidebar correctly hidden ✓, All 4 tiles present and functional ✓, Portofolio navigation with back button works ✓, Module navigation works (K-HTT, DKA) ✓. All 3 analysis modules load dashboards in both modes. No JavaScript errors. CODE QUALITY ISSUE (non-blocking): Duplicate testIDs detected for landing module quick-links (landing-module-/kht, landing-module-/copper, landing-module-/dka each appear 2x). Recommend fixing to ensure unique testIDs. Feature is production-ready."
 
   - task: "AI Vision analysis fails on real photos (proxy 60s timeout) — async job fix"
     implemented: true

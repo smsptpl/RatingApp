@@ -7,5 +7,5 @@ import { LandingPage } from "@/src/components/LandingPage";
 // page as the web home, with a back button to return to the grid menu.
 export default function PortofolioScreen() {
   const router = useRouter();
-  return <LandingPage onBack={() => (router.canGoBack() ? router.back() : router.push("/"))} />;
+  return <LandingPage idPrefix="portofolio" onBack={() => (router.canGoBack() ? router.back() : router.push("/"))} />;
 }

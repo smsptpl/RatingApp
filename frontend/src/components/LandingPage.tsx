@@ -17,7 +17,7 @@ const SERVICES: { icon: React.ComponentType<IconProps>; title: string; desc: str
   { icon: DeviceMobile, title: "Mobile App", desc: "Aplikasi mobile iOS & Android cross-platform.", color: "#8B5CF6" },
 ];
 
-export function LandingPage({ onBack }: { onBack?: () => void }) {
+export function LandingPage({ onBack, idPrefix = "landing" }: { onBack?: () => void; idPrefix?: string }) {
   const styles = useStyles();
   const { colors } = useTheme();
   const router = useRouter();
@@ -109,7 +109,7 @@ export function LandingPage({ onBack }: { onBack?: () => void }) {
               return (
                 <Pressable
                   key={m.route}
-                  testID={`landing-module-${m.route}`}
+                  testID={`${idPrefix}-module-${m.route}`}
                   onPress={() => router.push(m.route)}
                   style={({ pressed }: { pressed: boolean }) => [
                     styles.moduleCard,
