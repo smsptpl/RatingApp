@@ -8,7 +8,7 @@ import sys
 import requests
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://image-inspector-12.preview.emergentagent.com/api"
+BACKEND_URL = "https://rate-tracker-34.preview.emergentagent.com/api"
 
 # Color codes for output
 GREEN = "\033[92m"
